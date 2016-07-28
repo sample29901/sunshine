@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+
+        android:id="@+id/close"
+
+        android:orderInCategory="3"
+
+        android:title="Close"/>
+
+    <item
+
+        android:id="@+id/no_icon"
+
+        android:orderInCategory="2"
+
+        android:title="Sans Icon"/>
+
+    <item
+
+        android:id="@+id/disabled"
+
+        android:enabled="true"
+
+        android:orderInCategory="4"
+
+        android:title="Disabled"/>
+
+    <!-- orderInCategory表示的是item的排序-->
+
+    <group
+
+        android:id="@+id/other_stuff"
+
+        android:menuCategory="secondary"
+
+        android:visible="true" >
+
+        <item
+
+            android:id="@+id/later"
+
+            android:orderInCategory="0"
+
+            android:title="2nd-To-Last"/>
+
+        <item
+
+            android:id="@+id/last"
+
+            android:orderInCategory="1"
+
+            android:title="Last"/>
+
+    </group>
+
+    <!--表示的是二级菜单-->
+
+    <item
+
+        android:id="@+id/submenu"
+
+        android:orderInCategory="3"
+
+        android:title="A Submenu">
+
+        <menu>
+
+            <item
+
+                android:id="@+id/non_ghost"
+
+                android:alphabeticShortcut="n"
+
+                android:title="Non-Ghost"
+
+                android:visible="true"/>
+
+            <item
+
+                android:id="@+id/ghost"
+
+                android:alphabeticShortcut="g"
+
+                android:title="A Ghost"
+
+                android:visible="true"/>
+
+        </menu>
+
+    </item>
+
+
+
+</menu>
