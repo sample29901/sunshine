@@ -13,6 +13,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,6 +33,7 @@ public class ForecastFragment extends Fragment  implements LoaderManager.LoaderC
 
     private ForecastAdapter mForecastAdapter;
     private static final int FORECAST_LOADER = 0;
+    public static final String LOG_TAG = ForecastFragment.class.getSimpleName();
     private ListView mListView;
     private int mPosition = ListView.INVALID_POSITION;
     private static final String SELECTED_KEY = "selected_position";
@@ -113,6 +115,10 @@ public class ForecastFragment extends Fragment  implements LoaderManager.LoaderC
         if(id == R.id.action_refresh) {
             //Toast.makeText(getActivity(), "refresh", Toast.LENGTH_SHORT).show();
             updateWeather();
+            return true;
+        }
+        if (id == R.id.action_map) {
+            openPreferredLocationInMap();
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -237,170 +243,30 @@ public class ForecastFragment extends Fragment  implements LoaderManager.LoaderC
         }
     }
 
-    // fetchWeatherTask
+    private void openPreferredLocationInMap() {
+        // Using the URI scheme for showing a location found on a map.  This super-handy
+        // intent can is detailed in the "Common Intents" page of Android's developer site:
+        // http://developer.android.com/guide/components/intents-common.html#Maps
 
-    /*public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
-
-        private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
-
-
-        @Override
-        protected void onPostExecute(String[] strings) {
-            if(strings != null){
-                mForecastAdapter.clear();
-                mForecastAdapter.addAll(strings);
-            }
-        }
-
-        public String formatHighLow(double min,double max){
-            String str;
-            str = min + "/" + max;
-            return str;
-        }
-        private String[] getWeatherFromJson(String forecastString) throws JSONException{
-            // from api.openweathermap.org weatherDate process
-            final String OWM_LIST = "list";
-            final String OWM_WEATHER = "weather";
-            final String OWM_DESCRIPTION = "description";
-            final String OWM_DT = "dt_txt";
-            final String OWM_MAX = "temp_max";
-            final String OWM_MIN = "temp_min";
-            final String OWM_MAIN = "main";
-            JSONObject forecastJson = new JSONObject(forecastString);
-            JSONArray listArray = forecastJson.getJSONArray(OWM_LIST);
-            //JSONArray mainTempArray = forecastJson.getJSONArray(OWN_MAIN);
-            //JSONArray weatherArray = forecastJson.getJSONArray(OWM_WEATHER);
-            //JSONArray dataArray = forecastJson.getJSONArray(OWM_DT);
-            //Log.e("----------"," "+listArray.length());
-            String []results = new String [listArray.length()];
-            for (int i = 0; i <listArray.length() ; i++) {
-                String day = listArray.getJSONObject(i).getString(OWM_DT);
-                String description;
-                String highAndLow;
-                JSONObject weatherDes = listArray.getJSONObject(i);
-                results[i] = day.substring(5,13)+"时 ";
-                JSONObject mainObj = weatherDes.getJSONObject(OWM_MAIN);
-                highAndLow = formatHighLow(mainObj.getDouble(OWM_MIN),mainObj.getDouble(OWM_MAX));
-                results[i] += " "+highAndLow;
-                JSONArray weatherArray = weatherDes.getJSONArray(OWM_WEATHER);
-                description = weatherArray.getJSONObject(0).getString(OWM_DESCRIPTION);
-                results[i] += " "+description;
-                //Log.e("i=",i+"   "+results[i]);
-            }
-            *//*JSONObject weatherJson = new JSONObject(forecastString);
-            final String LIST = "HeWeather data service 3.0";
-            final String DAY = "daily_forecast";
-            final String DATE = "date";
-            final String TEMP = "tmp";
-            final String COND = "cond";
-            JSONArray weatherArr = weatherJson.getJSONArray(LIST);
-            JSONArray dayArray = weatherArr.getJSONObject(0).getJSONArray(DAY);
-            String [] results = new String[dayArray.length()];
-            for (int i = 0; i < dayArray.length();i++){
-                String date;
-                String temp;
-                String weatherDes;
-                date = dayArray.getJSONObject(i).getString(DATE).substring(5);
-                temp = dayArray.getJSONObject(i).getJSONObject(TEMP).getString("min");
-                temp += "/"+dayArray.getJSONObject(i).getJSONObject(TEMP).getString("max");
-                weatherDes ="D:"+dayArray.getJSONObject(i).getJSONObject(COND).getString("txt_d");
-                weatherDes +=" N:"+dayArray.getJSONObject(i).getJSONObject(COND).getString("txt_n");
-                results[i]= date+"    "+temp+"    "+weatherDes;
-                //Log.e("i=",i+"   "+results[i]);
-            }*//*
-            return results;
-        }
-
-        @Override
-        protected String[] doInBackground(String... params) {
-            if(params.length == 0){
-                return null;
-            }
-            // These two need to be declared outside the try/catch
-            // so that they can be closed in the finally block.
-            HttpURLConnection urlConnection = null;
-            BufferedReader reader = null;
-            // Will contain the raw JSON response as a string.
-            String forecastJsonStr = null;
-            *//*String format = "json";
-            String units = "metric";
-            String id = "98bd9ea6b58ec679fd7281e900797081";
-            int numDays = 50;*//*
-            try {
-                // Construct the URL for the OpenWeatherMap query
-                // Possible parameters are available at OWM's forecast API page, at
-                // http://openweathermap.org/API#forecast
-                //http://api.openweathermap.org/data/2.5/forecast?
-                //q=Nanjing,CN&mode=json&appid=98bd9ea6b58ec679fd7281e900797081
-                //URL url = new URL();
-                *//*final String FORECAST_BASE_URL = "http://api.openweathermap.org/data/2.5/forecast?lang=zh_cn";
-                final String QUERY_PARAM = "q";
-                final String FORMAT_PARAM = "mode";
-                final String UNITS_PARAM = "units";
-                final String DAYS_PARAM = "cnt";
-                final String APPID_PARAM = "appid";
-                Uri builtUri = Uri.parse(FORECAST_BASE_URL).buildUpon()
-                        .appendQueryParameter(QUERY_PARAM, params[0])
-                        .appendQueryParameter(FORMAT_PARAM, format)
-                        .appendQueryParameter(UNITS_PARAM, units)
-                        .appendQueryP,arameter(DAYS_PARAM Integer.toString(numDays))
-                        .appendQueryParameter(APPID_PARAM,id).build();
-                URL url = new URL(builtUri.toString());*//*
-                String urlString ="http://api.openweathermap.org/data/2.5/forecast?q="+params[0]+"&mode=json&units=metric&lang=zh_cn&cnt=50&appid=98bd9ea6b58ec679fd7281e900797081";
-                URL url = new URL(urlString);
-                //Log.e(LOG_TAG, "Built URI " + builtUri.toString());
-                // Create the request to OpenWeatherMap, and open the connection
-                urlConnection = (HttpURLConnection) url.openConnection();
-                urlConnection.setRequestMethod("GET");
-                urlConnection.connect();
-
-                // Read the input stream into a String
-                InputStream inputStream = urlConnection.getInputStream();
-                StringBuffer buffer = new StringBuffer();
-                if (inputStream == null) {
-                    // Nothing to do.
-                    forecastJsonStr = null;
-                }
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
-                    // But it does make debugging a *lot* easier if you print out the completed
-                    // buffer for debugging.
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    // Stream was empty.  No point in parsing.
-                    forecastJsonStr = null;
-                }
-                forecastJsonStr = buffer.toString();
-                //Log.e("weather------------",forecastJsonStr);
-                try {
-                    return getWeatherFromJson(forecastJsonStr);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } catch (IOException e) {
-                Log.e(LOG_TAG, "Error ", e);
-                // If the code didn't successfully get the weather data, there's no point in attempting
-                // to parse it.
-                forecastJsonStr = null;
-            } finally{
-                if (urlConnection != null) {
-                    urlConnection.disconnect();
-                }
-                if (reader != null) {
-                    try {
-                        reader.close();
-                    } catch (final IOException e) {
-                        Log.e(LOG_TAG, "Error closing stream", e);
-                    }
+        if ( null != mForecastAdapter ) {
+            Cursor c = mForecastAdapter.getCursor();
+            if ( null != c ) {
+                c.moveToPosition(0);
+                String posLat = c.getString(COL_COORD_LAT);
+                String posLong = c.getString(COL_COORD_LONG);
+                String location = c.getString(COL_LOCATION_SETTING);
+                Uri geoLocation = Uri.parse("geo:" + posLat + "," + posLong + "," + location);
+                //Log.e("map",geoLocation.toString());
+                Intent intent = new Intent(Intent.ACTION_VIEW);
+                intent.setData(geoLocation);
+                if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
+                    startActivity(intent);
+                } else {
+                    Log.d(LOG_TAG, "Couldn't call " + geoLocation.toString() + ", no receiving apps installed!");
                 }
             }
-            return null;
+
         }
-    }*/
+    }
 
 }
